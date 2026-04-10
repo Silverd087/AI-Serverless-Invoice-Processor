@@ -1,5 +1,5 @@
 {
-  "name": "amplify-vite-react-template",
+  "name": "AI-Serverless-Invoice-Processor",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -22,7 +22,9 @@
   "devDependencies": {
     "@aws-amplify/backend": "~1.19.0",
     "@aws-amplify/backend-cli": "~1.8.1",
-    "@eslint/compat":  "~2.0.1",
+    "@aws-sdk/client-bedrock-runtime": "^3.1026.0",
+    "@aws-sdk/client-textract": "^3.1026.0",
+    "@eslint/compat": "~2.0.1",
     "@eslint/eslintrc": "~3.3.3",
     "@eslint/js": "~9.39.2",
     "@types/react": "~18.3.27",
@@ -30,6 +32,8 @@
     "@typescript-eslint/eslint-plugin": "~8.53.0",
     "@typescript-eslint/parser": "~8.53.0",
     "@vitejs/plugin-react": "~5.1.2",
+    "aws-cdk-lib": "^2.248.0",
+    "constructs": "^10.6.0",
     "esbuild": "~0.27.2",
     "eslint": "~9.39.2",
     "eslint-plugin-react-hooks": "~7.0.1",
