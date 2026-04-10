@@ -1,6 +1,7 @@
 import { defineFunction } from '@aws-amplify/backend';
 
-export const sayHello = defineFunction({
+export const processInvoice = defineFunction({
     name: 'process-invoice',
     entry: './handler.ts',
+    timeoutSeconds: 60
 });
