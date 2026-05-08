@@ -5,7 +5,7 @@ import StatusBadge from "../components/StatusBadge";
 import Skeleton from "../components/Skeleton";
 import "./InvoiceDetail.css";
 import { type Schema } from "../../amplify/data/resource";
-import { generateClient } from "aws-amplify/data";
+import { generateClient, get } from "aws-amplify/data";
 
 interface InvoiceDetailProps {
   invoiceId: string;
@@ -20,21 +20,37 @@ export default function InvoiceDetail({ invoiceId, navigate }: InvoiceDetailProp
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
-  const client = generateClient<Schema>();
 
   const fetchInvoice = useCallback(async () => {
+    if (!invoiceId) return;
+
     setLoading(true);
     setError(null);
-    try {
-      const { data: data, errors } = await client.models.Invoice.get({ id: invoiceId });
-      if (errors) throw new Error(errors[0].message);
-      if (!data) throw new Error("Invoice not found");
 
-      if (data.s3Key) {
-        const { url } = await getUrl({ key: data.s3Key, options: { expiresIn: 3600 } });
-        setPdfUrl(url.toString());
+    try {
+      const restOperation = get({
+        apiName: 'invoiceRestApi',
+        path: `/invoices/${invoiceId}`,
+      });
+
+      const response = await restOperation.response;
+      const data = await response.body.json() as any;
+
+      if (data && data.id) {
+        setInvoice(data);
+
+        if (data.s3Key) {
+          const result = await getUrl({
+            path: data.s3Key,
+            options: { expiresIn: 3600 }
+          });
+          setPdfUrl(result.url.toString());
+        }
+      } else {
+        throw new Error("Invoice not found");
       }
-    } catch (err) {
+
+    } catch (err: any) {
       console.error("Failed to fetch invoice:", err);
       setError("Failed to load invoice details.");
       setInvoice(DEMO_DETAIL);

@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback } from "react";
 import { uploadData } from "aws-amplify/storage";
 import "./UploadModal.css";
+import { post } from "aws-amplify/api";
 
 const ACCEPTED_TYPES = ["application/pdf", "image/png", "image/jpeg", "image/tiff"];
 const MAX_SIZE_MB = 25;
@@ -54,21 +55,18 @@ export default function UploadModal({ onClose, onSuccess }: UploadModalProps) {
     setError(null);
     setProgress(0);
 
-    const key = `invoices/${Date.now()}-${file.name.replace(/\s+/g, "_")}`;
 
     try {
-      await uploadData({
-        key,
-        data: file,
+      const restOperation = post({
+        apiName: "invoiceRestApi",
+        path: '/invoices',
         options: {
-          contentType: file.type,
-          onProgress: ({ transferredBytes, totalBytes }) => {
-            if (totalBytes) {
-              setProgress(Math.round((transferredBytes / totalBytes) * 100));
-            }
-          },
-        },
-      }).result;
+          body: {
+            fileName: file.name,
+            fileType: file.type
+          }
+        }
+      }).response
 
       setProgress(100);
       setDone(true);

@@ -40,7 +40,7 @@ export default function Dashboard({ navigate }: DashboardProps) {
     setError(null);
     try {
       const restOperation = get({
-        apiName: "invoiceApi",
+        apiName: "invoiceRestApi",
         path: "/invoices",
       });
       const { body } = await restOperation.response;

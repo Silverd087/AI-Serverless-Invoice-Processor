@@ -3,5 +3,6 @@ import { defineFunction } from '@aws-amplify/backend';
 export const processInvoice = defineFunction({
     name: 'process-invoice',
     entry: './handler.ts',
-    timeoutSeconds: 60
+    timeoutSeconds: 60,
+    resourceGroupName: 'api-stack'
 });

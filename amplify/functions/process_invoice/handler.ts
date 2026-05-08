@@ -48,16 +48,47 @@ export const handler: Handler = async (event: S3Event) => {
 
 
             const prompt = `
-                You are an invoice processing assistant. Extract the following details from this text:
-                - Vendor Name
-                - Total Amount (as a number)
-                - Date
-                - Currency
+            You are an expert invoice extraction assistant. Your task is to extract structured data from the provided invoice text.
 
-                Return the result ONLY as a JSON object.
-                
-                Invoice Text:
-                ${text}
+            ### Extraction Requirements:
+            1. **Vendor Info**: Extract Name, Address, Email, and Phone.
+            2. **Financials**: Extract Subtotal, Tax Amount, and Total Amount (as floats).
+            3. **Identifiers**: Extract Invoice Number and PO Number.
+            4. **Dates**: Extract Invoice Date and Due Date in ISO 8601 format (YYYY-MM-DD).
+            5. **Currency**: Must be exactly one of: "USD" or "CAD".
+            6. **Line Items**: For every item, extract Description, Quantity, Unit Price, and Total.
+            7. **Metadata**: Provide a confidence score between 0 and 1 based on text clarity.
+
+            ### Output Format:
+            Return ONLY a valid JSON object. Do not include any conversational text or markdown blocks. The JSON must follow this structure:
+            {
+            "vendor": "string",
+            "vendor_address": "string",
+            "vendor_email": "string",
+            "vendor_phone": "string",
+            "amount": 0.0,
+            "subtotal": 0.0,
+            "tax_amount": 0.0,
+            "currency": "USD",
+            "date": "YYYY-MM-DD",
+            "due_date": "YYYY-MM-DD",
+            "invoice_number": "string",
+            "po_number": "string",
+            "payment_terms": "string",
+            "notes": "string",
+            "confidence": 0.0,
+            "line_items": [
+                {
+                "description": "string",
+                "quantity": 0.0,
+                "unit_price": 0.0,
+                "total": 0.0
+                }
+            ]
+            }
+
+            ### Invoice Text:
+            ${text}
             `;
 
             const payload = {
