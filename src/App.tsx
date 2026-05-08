@@ -1,6 +1,4 @@
 import { useState } from "react";
-import type { Schema } from "../amplify/data/resource";
-import { generateClient } from "aws-amplify/data";
 import type { AuthUser } from "aws-amplify/auth";
 import Dashboard from "./pages/Dashboard";
 import InvoiceDetail from "./pages/InvoiceDetail";
@@ -19,16 +17,8 @@ export interface NavigateFn {
 
 function App() {
   const [page, setPage] = useState<Page>({ name: "dashboard" });
-  const { user, signOut, authStatus } = useAuthenticator();
+  const { user, signOut } = useAuthenticator();
 
-  console.log("Auth Status:", authStatus);
-  console.log("User Object:", user);
-
-  if (authStatus !== 'authenticated') {
-    // If you see this in the console after "logging in", 
-    // the session isn't being saved to the browser.
-    return null;
-  }
 
   const navigate: NavigateFn = (name: any, params: any = {}) => {
     if (name === "dashboard") {

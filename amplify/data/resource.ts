@@ -8,7 +8,6 @@ specifies that any user authenticated via an API key can "create", "read",
 "update", and "delete" any "Todo" records.
 =========================================================================*/
 const schema = a.schema({
-  // Define the structure for line items first
   LineItem: a.customType({
     description: a.string(),
     quantity: a.float(),
@@ -18,7 +17,6 @@ const schema = a.schema({
 
   Invoice: a
     .model({
-      // Core Fields
       id: a.string().required(),
       s3Key: a.string(),
       status: a.enum(["PROCESSING", "COMPLETED", "FAILED", "REVIEW"]),
