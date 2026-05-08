@@ -1,0 +1,27 @@
+.empty-state {
+  padding: 60px 20px;
+  text-align: center;
+}
+.empty-icon {
+  font-size: 36px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  line-height: 1;
+}
+.empty-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.empty-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  max-width: 300px;
+  margin: 0 auto;
+}
+.empty-action {
+  margin-top: 22px;
+  display: flex;
+  justify-content: center;
+}

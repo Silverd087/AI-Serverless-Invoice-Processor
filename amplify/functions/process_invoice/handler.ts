@@ -85,9 +85,9 @@ export const handler: Handler = async (event: S3Event) => {
                 {
                     id: invoiceId,
                     status: "COMPLETED",
-                    vendorName: result['Vendor Name'] || result['vendorName'],
-                    totalAmount: parseFloat(result['Total Amount'] || result['totalAmount']),
-                    invoiceDate: result['Date'] || result['date'],
+                    vendor: result['Vendor Name'] || result['vendorName'],
+                    amount: parseFloat(result['Total Amount'] || result['totalAmount']),
+                    date: result['Date'] || result['date'],
                     currency: result['Currency'] || result['currency']
                 }
             )

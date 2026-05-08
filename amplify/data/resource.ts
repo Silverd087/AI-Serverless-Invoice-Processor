@@ -8,21 +8,46 @@ specifies that any user authenticated via an API key can "create", "read",
 "update", and "delete" any "Todo" records.
 =========================================================================*/
 const schema = a.schema({
+  // Define the structure for line items first
+  LineItem: a.customType({
+    description: a.string(),
+    quantity: a.float(),
+    unit_price: a.float(),
+    total: a.float(),
+  }),
+
   Invoice: a
     .model({
+      // Core Fields
+      id: a.string().required(),
       s3Key: a.string(),
-      status: a.enum(["PROCESSING", "COMPLETED", "FAILED"]),
-      vendorName: a.string(),
-      totalAmount: a.float(),
-      invoiceDate: a.datetime(),
-      currency: a.enum(["USD", "CAD"])
+      status: a.enum(["PROCESSING", "COMPLETED", "FAILED", "REVIEW"]),
+      vendor: a.string(),
+      amount: a.float(),
+      date: a.datetime(),
+      due_date: a.datetime(),
+      currency: a.enum(["USD", "CAD"]),
+
+      invoice_number: a.string(),
+      po_number: a.string(),
+      tax_amount: a.float(),
+      subtotal: a.float(),
+      payment_terms: a.string(),
+      notes: a.string(),
+      confidence: a.float(),
+      filename: a.string(),
+
+      uploaded_at: a.datetime(),
+      processed_at: a.datetime(),
+
+      vendor_address: a.string(),
+      vendor_email: a.string(),
+      vendor_phone: a.string(),
+
+      line_items: a.ref("LineItem").array(),
     })
-    .authorization((allow) => [
-      allow.owner(),
-    ]),
-}).authorization((allow) => [
-  allow.resource(processInvoice).to(['mutate', 'query'])
-]);
+    .authorization((allow) => [allow.owner()]),
+});
 
 export type Schema = ClientSchema<typeof schema>;
 

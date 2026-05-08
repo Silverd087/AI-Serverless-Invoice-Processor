@@ -1,39 +1,83 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { Schema } from "../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
+import type { AuthUser } from "aws-amplify/auth";
+import Dashboard from "./pages/Dashboard";
+import InvoiceDetail from "./pages/InvoiceDetail";
+import { useAuthenticator } from "@aws-amplify/ui-react";
 
-const client = generateClient<Schema>();
+
+export type Page =
+  | { name: "dashboard" }
+  | { name: "detail"; invoiceId: string };
+
+export interface NavigateFn {
+  (name: "dashboard", params?: {}): void;
+  (name: "detail", params: { invoiceId: string }): void;
+}
+
 
 function App() {
-  const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
+  const [page, setPage] = useState<Page>({ name: "dashboard" });
+  const { user, signOut, authStatus } = useAuthenticator();
 
-  useEffect(() => {
-    client.models.Todo.observeQuery().subscribe({
-      next: (data) => setTodos([...data.items]),
-    });
-  }, []);
+  console.log("Auth Status:", authStatus);
+  console.log("User Object:", user);
 
-  function createTodo() {
-    client.models.Todo.create({ content: window.prompt("Todo content") });
+  if (authStatus !== 'authenticated') {
+    // If you see this in the console after "logging in", 
+    // the session isn't being saved to the browser.
+    return null;
   }
 
+  const navigate: NavigateFn = (name: any, params: any = {}) => {
+    if (name === "dashboard") {
+      setPage({ name: "dashboard" });
+    } else if (name === "detail") {
+      setPage({ name: "detail", invoiceId: params.invoiceId });
+    }
+  };
+
   return (
-    <main>
-      <h1>My todos</h1>
-      <button onClick={createTodo}>+ new</button>
-      <ul>
-        {todos.map((todo) => (
-          <li key={todo.id}>{todo.content}</li>
-        ))}
-      </ul>
-      <div>
-        🥳 App successfully hosted. Try creating a new todo.
-        <br />
-        <a href="https://docs.amplify.aws/react/start/quickstart/#make-frontend-updates">
-          Review next step of this tutorial.
-        </a>
+    <div className="app-root">
+      <Header user={user} signOut={signOut} navigate={navigate} currentPage={page.name} />
+      <main className="app-main">
+        {page.name === "dashboard" && (
+          <Dashboard navigate={navigate} />
+        )}
+        {page.name === "detail" && (
+          <InvoiceDetail invoiceId={page.invoiceId} navigate={navigate} />
+        )}
+      </main>
+    </div>
+  );
+}
+
+type HeaderProps = {
+  user: AuthUser;
+  signOut: () => void;
+  navigate: NavigateFn;
+  currentPage: string;
+};
+
+function Header({ user, signOut, navigate, currentPage }: HeaderProps) {
+  return (
+    <header className="app-header">
+      <div className="header-inner">
+        <button className="logo" onClick={() => navigate("dashboard")}>
+          <span className="logo-mark">▲</span>
+          <span className="logo-text">Invoice</span>
+        </button>
+        <nav className="header-nav">
+          <span className="nav-greeting">
+            {user?.signInDetails?.loginId?.split("@")[0] || "User"}
+          </span>
+          <button className="btn-signout" onClick={signOut}>
+            Sign out
+          </button>
+        </nav>
       </div>
-    </main>
+    </header>
   );
 }
 

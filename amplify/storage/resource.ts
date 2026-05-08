@@ -3,7 +3,7 @@ import { processInvoice } from "../functions/process_invoice/resource";
 export const storage = defineStorage({
     name: 'invoiceBucket',
     access: (allow) => ({
-        'invoices/{user_id}/*': [
+        'uploads/*': [
             allow.entity("identity").to(["read", "write"]),
             allow.resource(processInvoice).to(["read"])
         ]
