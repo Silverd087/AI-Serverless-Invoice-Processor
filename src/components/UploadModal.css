@@ -72,7 +72,6 @@
   background: var(--bg-elevated);
 }
 
-/* ── Drop Zone ──────────────────────────────────────────────────────────── */
 .drop-zone {
   margin: 20px 24px;
   border: 1.5px dashed var(--border-light);
@@ -151,7 +150,6 @@
   font-family: var(--font-mono);
 }
 
-/* ── File Preview ───────────────────────────────────────────────────────── */
 .file-preview {
   display: flex;
   align-items: center;
@@ -201,7 +199,6 @@
   background: var(--status-failed-bg);
 }
 
-/* ── Progress ───────────────────────────────────────────────────────────── */
 .progress-wrap {
   margin: 0 24px 4px;
   display: flex;
@@ -229,7 +226,6 @@
   color: var(--text-secondary);
 }
 
-/* ── Error ──────────────────────────────────────────────────────────────── */
 .upload-error {
   margin: 0 24px;
   font-size: 13px;
@@ -240,7 +236,6 @@
   border-radius: var(--radius-sm);
 }
 
-/* ── Info Box ───────────────────────────────────────────────────────────── */
 .upload-info {
   display: flex;
   gap: 10px;
@@ -256,7 +251,6 @@
   margin-top: 1px;
 }
 
-/* ── Footer ─────────────────────────────────────────────────────────────── */
 .modal-footer {
   display: flex;
   justify-content: flex-end;
@@ -274,7 +268,6 @@
   animation: spin 0.7s linear infinite;
 }
 
-/* ── Success ────────────────────────────────────────────────────────────── */
 .upload-success {
   padding: 48px 32px;
   text-align: center;
@@ -323,7 +316,6 @@
   line-height: 1.6;
 }
 
-/* ─── Disabled button ─────────────────────────────────────────────────────── */
 .btn-primary:disabled,
 .btn-secondary:disabled {
   opacity: 0.45;

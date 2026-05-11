@@ -4,5 +4,5 @@ export const processInvoice = defineFunction({
     name: 'process-invoice',
     entry: './handler.ts',
     timeoutSeconds: 60,
-    resourceGroupName: 'api-stack'
+    resourceGroupName: 'storage'
 });

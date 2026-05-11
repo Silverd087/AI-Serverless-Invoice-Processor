@@ -1,11 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
-import { getUrl } from "aws-amplify/storage";
 import type { NavigateFn } from "../App";
 import StatusBadge from "../components/StatusBadge";
 import Skeleton from "../components/Skeleton";
 import "./InvoiceDetail.css";
 import { type Schema } from "../../amplify/data/resource";
-import { generateClient, get } from "aws-amplify/data";
+import { signedGet } from "../lib/signedRequest";
 
 interface InvoiceDetailProps {
   invoiceId: string;
@@ -22,35 +21,20 @@ export default function InvoiceDetail({ invoiceId, navigate }: InvoiceDetailProp
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
 
   const fetchInvoice = useCallback(async () => {
-    if (!invoiceId) return;
-
     setLoading(true);
     setError(null);
-
     try {
-      const restOperation = get({
-        apiName: 'invoiceRestApi',
-        path: `/invoices/${invoiceId}`,
-      });
+      const response = await signedGet(`/invoices/${invoiceId}`);
+      const data = await response.json();
+      console.log(data.s3Key)
+      setInvoice(data);
 
-      const response = await restOperation.response;
-      const data = await response.body.json() as any;
-
-      if (data && data.id) {
-        setInvoice(data);
-
-        if (data.s3Key) {
-          const result = await getUrl({
-            path: data.s3Key,
-            options: { expiresIn: 3600 }
-          });
-          setPdfUrl(result.url.toString());
-        }
-      } else {
-        throw new Error("Invoice not found");
+      if (!data.pdfUrl) {
+        console.log("Error fetching presigned url")
       }
+      setPdfUrl(data.pdfUrl);
 
-    } catch (err: any) {
+    } catch (err) {
       console.error("Failed to fetch invoice:", err);
       setError("Failed to load invoice details.");
       setInvoice(DEMO_DETAIL);
@@ -79,9 +63,7 @@ export default function InvoiceDetail({ invoiceId, navigate }: InvoiceDetailProp
       )}
 
       <div className="detail-grid">
-        {/* ── Left Column ───────────────────────────────────────── */}
         <div className="detail-main">
-          {/* Header card */}
           <div className="detail-card header-card">
             <div className="header-card-top">
               <div>
@@ -112,7 +94,6 @@ export default function InvoiceDetail({ invoiceId, navigate }: InvoiceDetailProp
             </div>
           </div>
 
-          {/* Line items */}
           {(loading || (invoice?.line_items?.length ?? 0) > 0) && (
             <div className="detail-card">
               <h2 className="card-section-title">Line Items</h2>
@@ -162,7 +143,6 @@ export default function InvoiceDetail({ invoiceId, navigate }: InvoiceDetailProp
             </div>
           )}
 
-          {/* Extracted data */}
           <div className="detail-card">
             <h2 className="card-section-title">Extracted Data</h2>
             {loading ? (
@@ -182,9 +162,7 @@ export default function InvoiceDetail({ invoiceId, navigate }: InvoiceDetailProp
           </div>
         </div>
 
-        {/* ── Right Column ──────────────────────────────────────── */}
         <div className="detail-sidebar">
-          {/* Processing info */}
           <div className="detail-card">
             <h2 className="card-section-title">Processing</h2>
             {loading ? (
@@ -201,7 +179,6 @@ export default function InvoiceDetail({ invoiceId, navigate }: InvoiceDetailProp
             )}
           </div>
 
-          {/* Vendor info */}
           <div className="detail-card">
             <h2 className="card-section-title">Vendor</h2>
             {loading ? (
@@ -218,7 +195,6 @@ export default function InvoiceDetail({ invoiceId, navigate }: InvoiceDetailProp
             )}
           </div>
 
-          {/* Original file */}
           {(pdfUrl || loading) && (
             <div className="detail-card file-card">
               <h2 className="card-section-title">Source File</h2>
@@ -252,7 +228,6 @@ export default function InvoiceDetail({ invoiceId, navigate }: InvoiceDetailProp
   );
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
 interface MetricProps {
   label: string;
   value: string | null | undefined;
@@ -309,7 +284,6 @@ function RawJson({ invoice }: RawJsonProps) {
   );
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 function formatDate(str: string | undefined | null): string | null {
   if (!str) return null;
   return new Date(str).toLocaleDateString("en-US", {
@@ -325,7 +299,6 @@ function formatDateTime(str: string | undefined | null): string | null {
   });
 }
 
-// ─── Demo fallback ────────────────────────────────────────────────────────────
 const DEMO_DETAIL: Invoice = {
   id: "INV-2024-001",
   vendor: "Acme Corp",

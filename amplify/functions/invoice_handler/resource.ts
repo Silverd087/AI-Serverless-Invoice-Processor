@@ -4,5 +4,5 @@ export const invoiceHandler = defineFunction({
     name: "invoiceHandler",
     entry: './handler.ts',
     timeoutSeconds: 60,
-    resourceGroupName: 'api-stack'
+    resourceGroupName: 'storage'
 });

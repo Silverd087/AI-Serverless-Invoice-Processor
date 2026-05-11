@@ -37,7 +37,6 @@
   line-height: 1;
 }
 
-/* ─── Grid ───────────────────────────────────────────────────────────────── */
 .detail-grid {
   display: grid;
   grid-template-columns: 1fr 320px;
@@ -51,7 +50,6 @@
   gap: 20px;
 }
 
-/* ─── Card ───────────────────────────────────────────────────────────────── */
 .detail-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -70,7 +68,6 @@
   margin-bottom: 20px;
 }
 
-/* ─── Header Card ────────────────────────────────────────────────────────── */
 .header-card {
   padding: 28px 28px 24px;
   background: linear-gradient(135deg, var(--bg-card) 0%, #1a1d28 100%);
@@ -101,7 +98,6 @@
   color: var(--text-muted);
 }
 
-/* ─── Metrics Strip ──────────────────────────────────────────────────────── */
 .metrics-strip {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -139,7 +135,6 @@
   color: var(--accent);
 }
 
-/* ─── Line Items Table ───────────────────────────────────────────────────── */
 .line-items-table {
   width: 100%;
   border-collapse: collapse;
@@ -174,7 +169,6 @@
   color: var(--text-secondary);
 }
 
-/* ─── Fields Grid ────────────────────────────────────────────────────────── */
 .fields-grid {
   display: flex;
   flex-direction: column;
@@ -212,7 +206,6 @@
   color: var(--text-secondary);
 }
 
-/* ─── File Download ──────────────────────────────────────────────────────── */
 .file-download-btn {
   display: flex;
   align-items: center;
@@ -231,7 +224,6 @@
 }
 .file-icon { font-size: 26px; flex-shrink: 0; }
 
-/* ─── Raw JSON ───────────────────────────────────────────────────────────── */
 .raw-json-card { padding: 0; overflow: hidden; }
 .raw-json-toggle {
   display: flex;
@@ -261,7 +253,6 @@
   line-height: 1.7;
 }
 
-/* ─── Responsive ─────────────────────────────────────────────────────────── */
 @media (max-width: 900px) {
   .detail-grid { grid-template-columns: 1fr; }
   .metrics-strip { grid-template-columns: repeat(2, 1fr); }

@@ -19,6 +19,7 @@ const schema = a.schema({
     .model({
       id: a.string().required(),
       s3Key: a.string(),
+      owner: a.string(),
       status: a.enum(["PROCESSING", "COMPLETED", "FAILED", "REVIEW"]),
       vendor: a.string(),
       amount: a.float(),
@@ -44,7 +45,10 @@ const schema = a.schema({
 
       line_items: a.ref("LineItem").array(),
     })
-    .authorization((allow) => [allow.owner()]),
+    .authorization((allow) => [
+      allow.owner(),
+      allow.authenticated().to(["read"])
+    ]),
 });
 
 export type Schema = ClientSchema<typeof schema>;

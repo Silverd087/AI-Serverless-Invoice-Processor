@@ -2,6 +2,8 @@ import { useState, useRef, useCallback } from "react";
 import { uploadData } from "aws-amplify/storage";
 import "./UploadModal.css";
 import { post } from "aws-amplify/api";
+import { signedPost } from "../lib/signedRequest";
+import { AuthUser } from "aws-amplify/auth";
 
 const ACCEPTED_TYPES = ["application/pdf", "image/png", "image/jpeg", "image/tiff"];
 const MAX_SIZE_MB = 25;
@@ -9,9 +11,10 @@ const MAX_SIZE_MB = 25;
 interface UploadModalProps {
   onClose: () => void;
   onSuccess: () => void;
+  user: AuthUser
 }
 
-export default function UploadModal({ onClose, onSuccess }: UploadModalProps) {
+export default function UploadModal({ onClose, onSuccess, user }: UploadModalProps) {
   const [file, setFile] = useState<File | null>(null);
   const [dragging, setDragging] = useState<boolean>(false);
   const [uploading, setUploading] = useState<boolean>(false);
@@ -48,25 +51,37 @@ export default function UploadModal({ onClose, onSuccess }: UploadModalProps) {
     e.preventDefault();
     setDragging(true);
   };
-
   const handleUpload = async () => {
     if (!file) return;
     setUploading(true);
     setError(null);
     setProgress(0);
 
-
     try {
-      const restOperation = post({
-        apiName: "invoiceRestApi",
-        path: '/invoices',
-        options: {
-          body: {
-            fileName: file.name,
-            fileType: file.type
-          }
-        }
-      }).response
+      
+      const response = await signedPost("/invoices", {
+        filename: file.name,
+        filetype: file.type,
+      }, user);
+
+      if (!response.ok) {
+        throw new Error(`Failed to get upload URL: ${response.status}`);
+      }
+
+      const { url, s3Key } = await response.json();
+      setProgress(30);
+
+      const uploadResponse = await fetch(url, {
+        method: "PUT",
+        body: file,
+        headers: {
+          "Content-Type": file.type,
+        },
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error(`S3 upload failed: ${uploadResponse.status}`);
+      }
 
       setProgress(100);
       setDone(true);

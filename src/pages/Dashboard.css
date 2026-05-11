@@ -50,7 +50,6 @@
   letter-spacing: 0.2px;
 }
 
-/* ─── Toolbar ────────────────────────────────────────────────────────────── */
 .toolbar {
   display: flex;
   align-items: flex-end;
@@ -74,7 +73,6 @@
   letter-spacing: -0.8px;
 }
 
-/* Filter tabs */
 .filter-tabs { display: flex; gap: 4px; }
 .filter-tab {
   font-size: 13px;
@@ -95,7 +93,6 @@
   border-color: rgba(184, 255, 87, 0.2);
 }
 
-/* Search */
 .search-wrap {
   position: relative;
   display: flex;
@@ -149,7 +146,6 @@
 }
 .sort-select:hover { border-color: var(--border-light); }
 
-/* ─── Table ──────────────────────────────────────────────────────────────── */
 .invoice-table-wrap {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -233,7 +229,6 @@
 
 .skeleton-row td { padding: 14px 20px; }
 
-/* ─── Table Footer ───────────────────────────────────────────────────────── */
 .table-footer {
   margin-top: 14px;
   text-align: right;
@@ -242,7 +237,6 @@
   font-family: var(--font-mono);
 }
 
-/* ─── Error Banner ───────────────────────────────────────────────────────── */
 .error-banner {
   background: rgba(255, 87, 87, 0.08);
   border: 1px solid rgba(255, 87, 87, 0.25);
@@ -264,7 +258,6 @@
 }
 .error-banner button:hover { opacity: 1; }
 
-/* ─── Responsive ─────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .stats-bar { gap: 10px; }
   .stat-card { min-width: calc(50% - 5px); }

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import type { AuthUser } from "aws-amplify/auth";
+import { useEffect, useState } from "react";
+import { fetchUserAttributes, type AuthUser } from "aws-amplify/auth";
 import Dashboard from "./pages/Dashboard";
 import InvoiceDetail from "./pages/InvoiceDetail";
 import { useAuthenticator } from "@aws-amplify/ui-react";
@@ -10,15 +10,30 @@ export type Page =
   | { name: "detail"; invoiceId: string };
 
 export interface NavigateFn {
-  (name: "dashboard", params?: {}): void;
+  (name: "dashboard", params?: { user?: String }): void;
   (name: "detail", params: { invoiceId: string }): void;
 }
 
 
 function App() {
   const [page, setPage] = useState<Page>({ name: "dashboard" });
+  const [email, setEmail] = useState<String | undefined>()
   const { user, signOut } = useAuthenticator();
+  useEffect(() => {
+    const getAttributes = async () => {
+      try {
+        const attributes = await fetchUserAttributes()
+        console.log(attributes)
+        setEmail(attributes.email)
+      } catch (err) {
+        console.log("Error fetching user attributes ", err)
+      }
+    }
+    if (user) {
+      getAttributes()
+    }
 
+  }, [user]);
 
   const navigate: NavigateFn = (name: any, params: any = {}) => {
     if (name === "dashboard") {
@@ -30,10 +45,10 @@ function App() {
 
   return (
     <div className="app-root">
-      <Header user={user} signOut={signOut} navigate={navigate} currentPage={page.name} />
+      <Header email={email} user={user} signOut={signOut} navigate={navigate} currentPage={page.name} />
       <main className="app-main">
         {page.name === "dashboard" && (
-          <Dashboard navigate={navigate} />
+          <Dashboard navigate={navigate} user={user} />
         )}
         {page.name === "detail" && (
           <InvoiceDetail invoiceId={page.invoiceId} navigate={navigate} />
@@ -45,12 +60,13 @@ function App() {
 
 type HeaderProps = {
   user: AuthUser;
+  email: String | undefined;
   signOut: () => void;
   navigate: NavigateFn;
   currentPage: string;
 };
 
-function Header({ user, signOut, navigate, currentPage }: HeaderProps) {
+function Header({ email, user, signOut, navigate, currentPage }: HeaderProps) {
   return (
     <header className="app-header">
       <div className="header-inner">
@@ -60,7 +76,7 @@ function Header({ user, signOut, navigate, currentPage }: HeaderProps) {
         </button>
         <nav className="header-nav">
           <span className="nav-greeting">
-            {user?.signInDetails?.loginId?.split("@")[0] || "User"}
+            {email || user?.signInDetails?.loginId?.split("@")[0] || "User"}
           </span>
           <button className="btn-signout" onClick={signOut}>
             Sign out

@@ -1,48 +1,37 @@
-/* ─── Google Fonts ────────────────────────────────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
-/* ─── Design Tokens ──────────────────────────────────────────────────────── */
 :root {
-  /* Fonts */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-display: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
-  /* Background layers */
   --bg:             #0d0f14;
   --bg-elevated:    #13161e;
   --bg-card:        #161922;
   --bg-hover:       #1c2030;
 
-  /* Borders */
   --border:         rgba(255, 255, 255, 0.07);
   --border-light:   rgba(255, 255, 255, 0.14);
 
-  /* Text */
   --text-primary:   #f0f2f8;
   --text-secondary: #9ba3b8;
   --text-muted:     #5a6278;
 
-  /* Accent — lime-green */
   --accent:         #b8ff57;
   --accent-dim:     rgba(184, 255, 87, 0.08);
 
-  /* Status colours */
   --status-completed: #4ade80;
   --status-processing: #facc15;
   --status-failed:    #f87171;
   --status-review:    #60a5fa;
 
-  /* Radius */
   --radius-sm:  8px;
   --radius:     12px;
   --radius-lg:  16px;
 
-  /* Motion */
   --transition: 0.18s ease;
 }
 
-/* ─── Reset & Base ───────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body {

@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import { get } from "aws-amplify/api";
 import type { NavigateFn } from "../App";
 import StatusBadge from "../components/StatusBadge";
 import UploadModal from "../components/UploadModal";
@@ -7,7 +6,9 @@ import EmptyState from "../components/EmptyState";
 import Skeleton from "../components/Skeleton";
 import "./Dashboard.css";
 import { type Schema } from "../../amplify/data/resource";
-
+import { Amplify } from 'aws-amplify';
+import { signedGet } from "../lib/signedRequest";
+import { AuthUser } from "aws-amplify/auth";
 
 const FILTERS = ["All", "COMPLETED", "PROCESSING", "REVIEW", "FAILED"] as const;
 type Filter = (typeof FILTERS)[number];
@@ -15,6 +16,7 @@ type SortKey = "date_desc" | "date_asc" | "amount_desc" | "amount_asc";
 
 interface DashboardProps {
   navigate: NavigateFn;
+  user: AuthUser
 }
 
 interface Stats {
@@ -26,7 +28,7 @@ interface Stats {
 type Invoice = Schema["Invoice"]["type"];
 
 
-export default function Dashboard({ navigate }: DashboardProps) {
+export default function Dashboard({ navigate, user }: DashboardProps) {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -39,17 +41,13 @@ export default function Dashboard({ navigate }: DashboardProps) {
     setLoading(true);
     setError(null);
     try {
-      const restOperation = get({
-        apiName: "invoiceRestApi",
-        path: "/invoices",
-      });
-      const { body } = await restOperation.response;
-      const data = await body.json() as { invoices?: Invoice[] } | Invoice[];
+      const response = await signedGet("/invoices");
+      const data = await response.json();
       const list = Array.isArray(data) ? data : data.invoices ?? [];
       setInvoices(list);
     } catch (err) {
       console.error("Failed to fetch invoices:", err);
-      setError("Failed to load invoices. Check your API configuration.");
+      setError("Failed to load invoices.");
       setInvoices(DEMO_INVOICES);
     } finally {
       setLoading(false);
@@ -86,10 +84,9 @@ export default function Dashboard({ navigate }: DashboardProps) {
       .filter((i) => i.status?.toLowerCase() === "completed")
       .reduce((sum, i) => sum + (i.amount ?? 0), 0),
   };
-
+  console.log(Amplify.getConfig().API?.REST);
   return (
     <div className="dashboard fade-up">
-      {/* ── Stats Bar ───────────────────────────────────────────── */}
       <div className="stats-bar">
         <StatCard label="Total Invoices" value={stats.total} icon="📄" />
         <StatCard label="Processed" value={stats.processed} icon="✓" accent />
@@ -102,7 +99,6 @@ export default function Dashboard({ navigate }: DashboardProps) {
         />
       </div>
 
-      {/* ── Toolbar ─────────────────────────────────────────────── */}
       <div className="toolbar">
         <div className="toolbar-left">
           <h1 className="page-title">Invoices</h1>
@@ -155,7 +151,6 @@ export default function Dashboard({ navigate }: DashboardProps) {
         </div>
       )}
 
-      {/* ── Invoice Table ────────────────────────────────────────── */}
       <div className="invoice-table-wrap">
         <table className="invoice-table">
           <thead>
@@ -235,6 +230,7 @@ export default function Dashboard({ navigate }: DashboardProps) {
 
       {showUpload && (
         <UploadModal
+          user={user}
           onClose={() => setShowUpload(false)}
           onSuccess={() => {
             setShowUpload(false);
@@ -246,7 +242,6 @@ export default function Dashboard({ navigate }: DashboardProps) {
   );
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
 interface StatCardProps {
   label: string;
   value: string | number;
@@ -267,7 +262,6 @@ function StatCard({ label, value, icon, accent = false, wide = false }: StatCard
   );
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString("en-US", {
     month: "short",
@@ -276,7 +270,6 @@ function formatDate(dateStr: string): string {
   });
 }
 
-// ─── Demo data ────────────────────────────────────────────────────────────────
 const DEMO_INVOICES: Invoice[] = [
   { id: "INV-2024-001", vendor: "Acme Corp", date: "2024-12-01", amount: 4250.00, status: "COMPLETED" },
   { id: "INV-2024-002", vendor: "TechSupplies", date: "2024-12-03", amount: 1830.50, status: "PROCESSING" },
