@@ -1,7 +1,5 @@
 import { useState, useRef, useCallback } from "react";
-import { uploadData } from "aws-amplify/storage";
 import "./UploadModal.css";
-import { post } from "aws-amplify/api";
 import { signedPost } from "../lib/signedRequest";
 import { AuthUser } from "aws-amplify/auth";
 
@@ -58,7 +56,7 @@ export default function UploadModal({ onClose, onSuccess, user }: UploadModalPro
     setProgress(0);
 
     try {
-      
+
       const response = await signedPost("/invoices", {
         filename: file.name,
         filetype: file.type,
@@ -68,7 +66,7 @@ export default function UploadModal({ onClose, onSuccess, user }: UploadModalPro
         throw new Error(`Failed to get upload URL: ${response.status}`);
       }
 
-      const { url, s3Key } = await response.json();
+      const { url } = await response.json();
       setProgress(30);
 
       const uploadResponse = await fetch(url, {
