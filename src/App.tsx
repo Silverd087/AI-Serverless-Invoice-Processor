@@ -45,7 +45,7 @@ function App() {
 
   return (
     <div className="app-root">
-      <Header email={email} user={user} signOut={signOut} navigate={navigate} currentPage={page.name} />
+      <Header email={email} user={user} signOut={signOut} navigate={navigate} />
       <main className="app-main">
         {page.name === "dashboard" && (
           <Dashboard navigate={navigate} user={user} />
@@ -63,10 +63,9 @@ type HeaderProps = {
   email: String | undefined;
   signOut: () => void;
   navigate: NavigateFn;
-  currentPage: string;
 };
 
-function Header({ email, user, signOut, navigate, currentPage }: HeaderProps) {
+function Header({ email, user, signOut, navigate }: HeaderProps) {
   return (
     <header className="app-header">
       <div className="header-inner">
