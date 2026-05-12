@@ -18,8 +18,8 @@ export const auth = defineAuth({
           email: 'email',
         }
       },
-      callbackUrls: ["http://localhost:5173/"],
-      logoutUrls: ["http://localhost:5173/"]
+      callbackUrls: ["http://localhost:5173/", "https://www.invoflow.click/"],
+      logoutUrls: ["http://localhost:5173/", "https://www.invoflow.click/"]
     },
   },
   multifactor: {
