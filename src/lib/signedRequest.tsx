@@ -1,9 +1,9 @@
 import { AuthUser, fetchAuthSession } from "aws-amplify/auth";
 import { SignatureV4 } from "@aws-sdk/signature-v4";
 import { Sha256 } from "@aws-crypto/sha256-js";
+import outputs from "../../amplify_outputs.json"
 
-
-const API_ENDPOINT = "https://ut32kxo1wk.execute-api.us-east-1.amazonaws.com/dev";
+const API_ENDPOINT = outputs.custom?.API?.invoiceApi?.endpoint;
 const REGION = "us-east-1";
 interface UploadRequestBody {
     filetype: string;
