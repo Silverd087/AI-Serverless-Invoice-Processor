@@ -61,7 +61,6 @@ export default function UploadModal({ onClose, onSuccess, user }: UploadModalPro
         filename: file.name,
         filetype: file.type,
       }, user);
-      console.log(response)
 
 
       if (!response.ok) {
