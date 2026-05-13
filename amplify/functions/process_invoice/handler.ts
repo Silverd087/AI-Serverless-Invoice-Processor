@@ -4,7 +4,7 @@ import { BedrockRuntimeClient, InvokeModelCommand } from "@aws-sdk/client-bedroc
 import { SignatureV4 } from "@aws-sdk/signature-v4";
 import { Sha256 } from "@aws-crypto/sha256-js";
 import { defaultProvider } from "@aws-sdk/credential-provider-node";
-import { HeadObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { S3Client } from "@aws-sdk/client-s3";
 const REGION = process.env.AWS_REGION!;
 const APPSYNC_ENDPOINT = process.env.APPSYNC_ENDPOINT!;
 
@@ -48,7 +48,7 @@ export const handler: Handler = async (event: S3Event) => {
         const objectKey = decodeURIComponent(record.s3.object.key.replace(/\+/g, " "));
         let invoiceId: string | undefined;
         const parts = objectKey.split('/');
-        const owner = parts[1]; 
+        const owner = parts[1];
         try {
             const createData = await appsyncRequest(`
         mutation CreateInvoice($input: CreateInvoiceInput!) {

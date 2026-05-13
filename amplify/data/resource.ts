@@ -44,6 +44,7 @@ const schema = a.schema({
 
       line_items: a.ref("LineItem").array(),
     })
+    .secondaryIndexes((index) => [index("owner")])
     .authorization((allow) => [
       allow.owner(),
       allow.authenticated().to(["read"])

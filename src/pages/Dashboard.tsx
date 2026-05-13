@@ -6,7 +6,6 @@ import EmptyState from "../components/EmptyState";
 import Skeleton from "../components/Skeleton";
 import "./Dashboard.css";
 import { type Schema } from "../../amplify/data/resource";
-import { Amplify } from 'aws-amplify';
 import { signedGet } from "../lib/signedRequest";
 import { AuthUser } from "aws-amplify/auth";
 
@@ -84,7 +83,6 @@ export default function Dashboard({ navigate, user }: DashboardProps) {
       .filter((i) => i.status?.toLowerCase() === "completed")
       .reduce((sum, i) => sum + (i.amount ?? 0), 0),
   };
-  console.log(Amplify.getConfig().API?.REST);
   return (
     <div className="dashboard fade-up">
       <div className="stats-bar">

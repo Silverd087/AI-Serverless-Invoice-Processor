@@ -61,12 +61,19 @@ export default function UploadModal({ onClose, onSuccess, user }: UploadModalPro
         filename: file.name,
         filetype: file.type,
       }, user);
+      console.log(response)
+
 
       if (!response.ok) {
+        if (response.status === 403) {
+          setError("Quota exceeded: Maximum 3 invoices allowed.");
+          setUploading(false);
+          return;
+        }
         throw new Error(`Failed to get upload URL: ${response.status}`);
       }
-
       const { url } = await response.json();
+
       setProgress(30);
 
       const uploadResponse = await fetch(url, {

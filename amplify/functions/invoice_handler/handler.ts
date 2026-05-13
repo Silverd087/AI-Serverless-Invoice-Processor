@@ -168,6 +168,38 @@ export const handler: APIGatewayProxyHandler = async (event) => {
         if (event.httpMethod === "POST") {
             const { filename, filetype } = JSON.parse(event.body || "{}");
             const ownerId = event.headers['x-amz-meta-owner'];
+
+            try {
+                const listQuery = `
+                        query ListInvoicesByOwner($owner: String!) {
+                            listInvoices(filter: { owner: { eq: $owner } }) {
+                            items {
+                                id
+                            }
+                            }
+                        }
+                        `;
+
+                const existingInvoices = await appsyncRequest(listQuery, { owner: owner });
+                const currentCount = existingInvoices.listInvoices.items.length;
+                if (currentCount >= 3) {
+                    console.log(`Usage limit reached for user: ${owner}. Blocking processing.`);
+
+                    return {
+                        statusCode: 403,
+                        body: "Quota exceeded: Maximum 3 invoices allowed.",
+                        headers
+                    };
+                }
+            }
+            catch (error) {
+                return {
+                    statusCode: 500,
+                    body: "Error fetching user invoices.",
+                    headers
+                };
+            }
+
             const bucketName = process.env.INVOICE_BUCKET_NAME;
             const s3Key = `uploads/${ownerId}/${Date.now()}-${filename}`;
             const command = new PutObjectCommand({

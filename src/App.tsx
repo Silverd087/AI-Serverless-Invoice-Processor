@@ -23,7 +23,6 @@ function App() {
     const getAttributes = async () => {
       try {
         const attributes = await fetchUserAttributes()
-        console.log(attributes)
         setEmail(attributes.email)
       } catch (err) {
         console.log("Error fetching user attributes ", err)

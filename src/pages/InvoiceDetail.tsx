@@ -26,7 +26,6 @@ export default function InvoiceDetail({ invoiceId, navigate }: InvoiceDetailProp
     try {
       const response = await signedGet(`/invoices/${invoiceId}`);
       const data = await response.json();
-      console.log(data.s3Key)
       setInvoice(data);
 
       if (!data.pdfUrl) {
